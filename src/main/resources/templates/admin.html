@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>体育精彩瞬间管理系统</title>
+    <link rel="stylesheet" href="/static/css/adminCss.css">
+</head>
+<body>
+<header class="main-header">
+    <h1>体育精彩瞬间管理系统</h1>
+    <div class="user-panel" onclick="toggleDropdown(event)">
+        <span class="username" th:text="${username}">管理员</span>
+        <div class="dropdown-content" id="userDropdown">
+            <a th:href="@{/admin/profile}">基本资料</a>
+            <a href="javascript:void(0);" onclick="logout()" class="logout-btn">注销</a>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <!-- 左侧栏作为管理菜单 -->
+    <aside class="profile-sidebar">
+        <ul class="profile-menu">
+            <li class="active" onclick="showAdminTab(this, 'main')">系统首页</li>
+            <li onclick="showAdminTab(this, 'user-controller')">用户管理</li>
+            <li onclick="showAdminTab(this, 'video-controller')">视频资料管理</li>
+        </ul>
+    </aside>
+
+    <main class="profile-content">
+        <div id="main" class="profile-card active">
+            <section class="admin-dashboard">
+                <h2>系统首页</h2>
+
+                <div class="welcome-card">
+                    <p>👋 欢迎回来！</p>
+                    <p>您可以从左侧导航栏中选择操作，例如上传视频、管理视频或查看分类内容。</p>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3>今日使用人数</h3>
+                        <p>12 条</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>用户数量</h3>
+                        <p>5,432 次</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>视频数量</h3>
+                        <p>98 条</p>
+                    </div>
+                </div>
+
+                <div class="tips">
+                    <h4>使用小贴士：</h4>
+                    <ul>
+                        <li>点击“视频上传”可以添加新的视频内容</li>
+                        <li>“视频管理”支持视频删除、修改、查看详情</li>
+                        <li>“视频查看”可按分类浏览视频资源</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+        <div id="user-controller" class="profile-card">
+            <h2>用户管理</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <button onclick="openAddUserModal()">添加用户</button>
+                <div>
+                    <input type="number" id="searchIdInput" placeholder="输入用户ID">
+                    <button onclick="searchUserById()">搜索</button>
+                </div>
+            </div>
+
+            <table id="userTable" border="1" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                <tr>
+                    <th>ID</th><th>用户名</th><th>密码</th><th>是否管理员</th><th>创建时间</th>
+                    <th>电话</th><th>邮箱</th><th>性别</th><th>操作</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- 添加/编辑弹窗 -->
+            <div id="userModal" style="display: none; position: fixed; top: 20%; left: 30%; background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 999;">
+                <h3 id="modalTitle">添加用户</h3>
+                <form onsubmit="submitUserForm(event)">
+                    <input type="hidden" id="formUserId">
+                    用户名：<input type="text" id="formUserName"><br>
+                    密码：<input type="text" id="formPassword"><br>
+                    是否管理员：<input type="checkbox" id="formIsAdmin"><br>
+                    电话：<input type="text" id="formPhone"><br>
+                    邮箱：<input type="text" id="formEmail"><br>
+                    性别：<input type="text" id="formGender"><br>
+                    头像URL：<input type="text" id="formAvatar"><br>
+
+                    <span id="createAtDisplay" style="display:block; margin-top: 10px;"></span><br>
+
+                    <button type="submit">提交</button>
+                    <button type="button" onclick="closeUserModal()">取消</button>
+                </form>
+            </div>
+        </div>
+        <div id="video-controller" class="profile-card">
+            <h2>视频资料管理</h2>
+            <div id="videoManageContainer">
+                <button onclick="openVideoModal()">添加视频</button>
+                <input type="text" id="videoSearchInput" oninput="searchVideos()" placeholder="搜索视频...">
+                <table id="videoTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th><th>名称</th><th>封面</th><th>分类</th><th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div id="videoModal" style="display: none; position: fixed; top: 20%; left: 30%; background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 999;">
+                    <h3 id="videoModalTitle">添加视频</h3>
+                    <form onsubmit="submitVideoForm(event)">
+                        <input type="hidden" id="formVideoId">
+                        视频名称：<input id="formVideoName"><br>
+                        封面URL：<input id="formVideoCover"><br>
+                        视频URL：<input id="formVideoUrl"><br>
+                        上传本地视频：<input type="file" id="formVideoFile" accept="video/mp4" onchange="uploadVideoFile()"><br>
+                        上传用户：<select id="formUserId">
+                            <option value="">请选择用户</option>
+                        </select><br>
+                        分类：<input id="formCategory"><br>
+                        <br>
+                        <button type="submit">提交</button>
+                        <button type="button" onclick="closeVideoModal()">取消</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="/static/js/adminJs.js"></script>
+</body>
+</html>

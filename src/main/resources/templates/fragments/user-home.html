@@ -1,0 +1,93 @@
+<section class="user-dashboard">
+    <h2>系统首页</h2>
+
+    <div class="welcome-card">
+        <p>👋 欢迎回来！</p>
+        <p>您可以从左侧导航栏中选择操作，例如上传视频、管理视频或查看分类内容。</p>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>已上传视频</h3>
+            <p>12 条</p>
+        </div>
+        <div class="stat-card">
+            <h3>浏览总量</h3>
+            <p>5,432 次</p>
+        </div>
+        <div class="stat-card">
+            <h3>评论数量</h3>
+            <p>98 条</p>
+        </div>
+    </div>
+
+    <div class="tips">
+        <h4>使用小贴士：</h4>
+        <ul>
+            <li>点击“视频上传”可以添加新的视频内容</li>
+            <li>“视频管理”支持视频删除、修改、查看详情</li>
+            <li>“视频查看”可按分类浏览视频资源</li>
+        </ul>
+    </div>
+</section>
+
+<style>
+    .user-dashboard {
+        padding: 2rem;
+        background-color: #f9f9f9;
+    }
+
+    .welcome-card {
+        background: #eaf6ff;
+        border-left: 5px solid #3498db;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .stats-container {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        padding: 1rem 2rem;
+        flex: 1;
+        text-align: center;
+    }
+
+    .stat-card h3 {
+        margin-bottom: 0.5rem;
+        color: #555;
+    }
+
+    .stat-card p {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .tips {
+        background: #fff3cd;
+        border-left: 5px solid #ffc107;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+    }
+
+    .tips h4 {
+        margin-bottom: 0.5rem;
+    }
+
+    .tips ul {
+        margin: 0;
+        padding-left: 1.2rem;
+    }
+
+    .tips li {
+        margin-bottom: 0.5rem;
+    }
+</style>

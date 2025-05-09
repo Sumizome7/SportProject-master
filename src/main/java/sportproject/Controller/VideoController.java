@@ -1,0 +1,73 @@
+package sportproject.Controller;
+
+import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.http.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import sportproject.Entity.Videos;
+import sportproject.Service.VideoService;
+import org.springframework.ui.Model;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Controller
+@RequestMapping("/api/videos")
+public class VideoController {
+
+    @Autowired
+    private VideoService videoService;
+
+    private static final Logger logger = LoggerFactory.getLogger(VideoController.class);
+
+    @ResponseBody
+    @GetMapping("/category/{category}")
+    public ResponseEntity<?> getVideosByCategory(@PathVariable String category, HttpSession session) {
+        logger.info("请求视频类别: {}", category);
+
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("用户未登录");
+        }
+
+        try {
+            List<Videos> videos;
+            if ("all".equalsIgnoreCase(category)) {
+                videos = videoService.videoForUsers(userId);
+            } else {
+                videos = videoService.videoList(userId, category);
+            }
+
+            return ResponseEntity.ok(convertVideoData(videos));
+        } catch (Exception e) {
+            logger.error("获取视频失败", e);
+            return ResponseEntity.internalServerError().body("Error retrieving videos");
+        }
+    }
+
+
+    private List<Map<String, Object>> convertVideoData(List<Videos> videos) {
+        return videos.stream().map(v -> {
+            Map<String, Object> videoData = new HashMap<>();
+            videoData.put("id", v.getVideoId());
+            videoData.put("title", v.getVideoName());
+            videoData.put("cover", "/videos/cover/" + v.getVideoCover());
+            videoData.put("url", "/videos/clips/" + v.getVideoUrl());
+            videoData.put("category", v.getCategory());
+            videoData.put("uploadTime", v.getUploadTime());
+            return videoData;
+        }).collect(Collectors.toList());
+    }
+
+    @GetMapping("/play/{id}")
+    public String playVideo(@PathVariable("id") int videoId, Model model) {
+        Videos video = videoService.videoInfo(videoId);
+        model.addAttribute("video", video);
+        return "videoPlayer";
+    }
+
+}

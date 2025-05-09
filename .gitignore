@@ -1,0 +1,48 @@
+# 帮助文档
+HELP.md
+
+# 编译输出
+target/
+build/
+
+# IDEA & STS
+.idea/
+*.iml
+*.ipr
+*.iws
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# VS Code
+.vscode/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Maven Wrapper
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# 上传文件和大文件
+upload/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+*.wmv
+*.zip
+*.pt
+*.h5

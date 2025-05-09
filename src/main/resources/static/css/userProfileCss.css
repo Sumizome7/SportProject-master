@@ -1,0 +1,165 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main-header {
+    background: #2c3e50;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+header .btn {
+    background: #4b5563;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+header .btn:hover {
+    background: #374151;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.profile-sidebar {
+    width: 220px;
+    background: #f9fafb;
+    border-right: 1px solid #e5e7eb;
+    padding: 24px 0;
+    box-shadow: 1px 0 3px rgba(0,0,0,0.03);
+}
+
+.profile-menu {
+    list-style: none;
+}
+
+.profile-menu li {
+    padding: 14px 28px;
+    cursor: pointer;
+    color: #374151;
+    font-size: 15px;
+    transition: background 0.2s ease;
+}
+
+.profile-menu li:hover {
+    background: #e5e7eb;
+}
+
+.profile-menu li.active {
+    background: #d1d5db;
+    border-left: 4px solid #1f2937;
+    font-weight: 600;
+}
+
+/* 主体内容 */
+.profile-content {
+    flex: 1;
+    padding: 32px;
+    background: #f9fafb;
+    overflow-y: auto;
+}
+
+/* 卡片样式微调 */
+.profile-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 32px;
+    display: none;
+    border: 1px solid #e5e7eb;
+}
+
+.profile-card.active {
+    display: block;
+}
+
+.profile-card h2 {
+    font-size: 20px;
+    color: #111827;
+    margin-bottom: 20px;
+}
+
+/* 表单样式调整 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #374151;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #fefefe;
+    color: #111827;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* 按钮样式统一 */
+.btn {
+    padding: 10px 16px;
+    background: #1f2937;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.btn:hover {
+    background: #374151;
+}
+
+/* 头像上传区域美化 */
+.avatar-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.avatar-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 2px solid #d1d5db;
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

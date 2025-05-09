@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人中心</title>
+  <link href="../static/css/userProfileCss.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="main-header">
+  <h1>个人中心</h1>
+  <div class="user-info">
+    <span th:text="${username}">用户名</span>
+    <button class="btn" onclick="window.location.href='/user'">返回主页</button>
+  </div>
+</header>
+
+<div class="container">
+  <aside class="profile-sidebar">
+    <ul class="profile-menu">
+      <li class="active" onclick="showTab('basic-info')">个人资料</li>
+      <li onclick="showTab('change-password')">修改密码</li>
+      <li onclick="showTab('upload-avatar')">上传头像</li>
+    </ul>
+  </aside>
+
+  <main class="profile-content">
+    <!-- 个人资料 -->
+    <div id="basic-info" class="profile-card active">
+      <h2>个人资料</h2>
+      <form id="basicInfoForm">
+        <input type="hidden" id="userId" th:value="${userId}">
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" class="form-control" id="userName" th:value="${username}">
+        </div>
+        <div class="form-group">
+          <label>电子邮箱</label>
+          <input type="email" class="form-control" id="email" th:value="${email}">
+        </div>
+        <div class="form-group">
+          <label>手机号码</label>
+          <input type="tel" class="form-control" id="phone" th:value="${phone}">
+        </div>
+        <button type="button" class="btn" onclick="updateBasicInfo()">保存更改</button>
+      </form>
+    </div>
+
+    <!-- 修改密码 -->
+    <div id="change-password" class="profile-card">
+      <h2>修改密码</h2>
+      <form id="passwordForm">
+        <div class="form-group">
+          <label>当前密码</label>
+          <input type="password" class="form-control" id="currentPassword" required>
+        </div>
+        <div class="form-group">
+          <label>新密码</label>
+          <input type="password" class="form-control" id="newPassword" required>
+        </div>
+        <div class="form-group">
+          <label>确认新密码</label>
+          <input type="password" class="form-control" id="confirmPassword" required>
+        </div>
+        <button type="button" class="btn" onclick="changePassword()">修改密码</button>
+      </form>
+    </div>
+
+    <!-- 上传头像 -->
+    <div id="upload-avatar" class="profile-card">
+      <h2>上传头像</h2>
+      <div class="avatar-upload">
+        <div class="avatar-preview">
+          <img id="avatarPreview" th:src="${avatarUrl ?: '/images/default-avatar.jpg'}" alt="头像预览">
+        </div>
+        <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="previewAvatar()">
+        <button type="button" class="btn" onclick="document.getElementById('avatarInput').click()">选择图片</button>
+        <button type="button" class="btn" onclick="uploadAvatar()" style="margin-top: 16px;">上传头像</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../static/js/userProfileJs.js"></script>
+</body>
+</html>
