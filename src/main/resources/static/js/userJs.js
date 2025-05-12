@@ -168,7 +168,7 @@ function loadVideos() {
         });
 }
 
-async function submitVideoForm(event) {
+function submitVideoForm(event) {
     event.preventDefault();
 
     const formData = new FormData();
@@ -177,24 +177,50 @@ async function submitVideoForm(event) {
     formData.append("coverFile", document.getElementById("formVideoCoverFile").files[0]);
     formData.append("category", document.getElementById("formCategory").value);
 
-    try {
-        const response = await fetch("/api/videos/upload", {
-            method: "POST",
-            body: formData
-        });
+    const xhr = new XMLHttpRequest();
+    const progressText = document.getElementById('uploadStatus');
+    progressText.innerText = '准备上传...';
+    progressText.style.display = 'block';
 
-        if (!response.ok) {
-            throw new Error("上传失败，状态码：" + response.status);
+    xhr.open("POST", "/api/videos/upload");
+
+    // ✅ 上传进度监听
+    xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            progressText.innerText = `上传中... ${percent}%`;
+
+            // ✅ 更新进度条
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const progressBar = document.getElementById('uploadProgressBar');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = percent + '%';
         }
+    };
 
-        alert("上传成功！");
-        closeVideoModal();
-        loadVideos(); // 重新加载视频列表
-    } catch (error) {
-        console.error("上传失败:", error);
-        alert("上传失败，请检查网络或文件格式");
-    }
+    // ✅ 成功后
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            alert('上传成功！');
+            closeVideoModal();
+            loadVideos();
+        } else {
+            alert('上传失败：' + xhr.statusText);
+        }
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    // ✅ 错误处理
+    xhr.onerror = function () {
+        alert('上传失败，请检查网络');
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    xhr.send(formData);
 }
+
 
 
 function openVideoModal() {
@@ -204,6 +230,11 @@ function openVideoModal() {
     document.getElementById('formVideoFile').value = "";
     document.getElementById('formVideoFile').value = "";
     document.getElementById('formCategory').value = "running";
+
+    // ✅ 隐藏进度提示
+    document.getElementById('uploadStatus').style.display = 'none';
+    document.getElementById('uploadProgressContainer').style.display = 'none';
+
     document.getElementById('videoModal').style.display = 'block';
 }
 
@@ -230,10 +261,14 @@ function editVideo(video) {
     const form = document.querySelector("#videoModal form");
     form.onsubmit = updateVideo;
 
+    // ✅ 隐藏进度提示
+    document.getElementById('uploadStatus').style.display = 'none';
+    document.getElementById('uploadProgressContainer').style.display = 'none';
+
     document.getElementById('videoModal').style.display = 'block';
 }
 
-async function updateVideo(event) {
+function updateVideo(event) {
     event.preventDefault();
 
     const videoId = document.getElementById("formVideoId").value;
@@ -247,21 +282,47 @@ async function updateVideo(event) {
     if (videoFile) formData.append("videoFile", videoFile);
     if (coverFile) formData.append("coverFile", coverFile);
 
-    try {
-        const response = await fetch("/api/videos/update", {
-            method: "POST",
-            body: formData
-        });
+    const xhr = new XMLHttpRequest();
+    const progressText = document.getElementById('uploadStatus');
+    progressText.innerText = '准备上传...';
+    progressText.style.display = 'block';
 
-        if (!response.ok) throw new Error("编辑失败");
+    xhr.open("POST", "/api/videos/update");
 
-        alert("修改成功！");
-        closeVideoModal();
-        loadVideos();
-    } catch (err) {
-        alert("修改失败：" + err.message);
-    }
+    xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            progressText.innerText = `上传中... ${percent}%`;
+
+            // ✅ 更新进度条
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const progressBar = document.getElementById('uploadProgressBar');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = percent + '%';
+        }
+    };
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            alert('修改成功！');
+            closeVideoModal();
+            loadVideos();
+        } else {
+            alert('修改失败：' + xhr.statusText);
+        }
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    xhr.onerror = function () {
+        alert('修改失败，请检查网络');
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    xhr.send(formData);
 }
+
 
 
 function searchVideos() {

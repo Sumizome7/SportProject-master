@@ -67,6 +67,7 @@
                         <li>点击“视频上传”可以添加新的视频内容</li>
                         <li>“视频管理”支持视频删除、修改、查看详情</li>
                         <li>“视频查看”可按分类浏览视频资源</li>
+                        <li>上传或修改视频时，请耐心等待几秒哦~即使进度条已经100%</li>
                     </ul>
                 </div>
             </section>
@@ -99,6 +100,10 @@
                             <option value="running">running</option>
                             <option value="basketball">basketball</option>
                         </select><br><br>
+                        <p id="uploadStatus" style="display: none; color: green;"></p>
+                        <div id="uploadProgressContainer" style="width: 100%; background: #eee; border-radius: 5px; height: 10px; margin-top: 10px; display: none;">
+                            <div id="uploadProgressBar" style="width: 0%; height: 100%; background: linear-gradient(to right, #4facfe, #00f2fe); border-radius: 5px; transition: width 0.3s;"></div>
+                        </div>
                         <button type="submit">提交</button>
                         <button type="button" onclick="closeVideoModal()">取消</button>
                     </form>
