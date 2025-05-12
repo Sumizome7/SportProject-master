@@ -25,6 +25,7 @@
             <li class="active" onclick="showAdminTab(this, 'main')">系统首页</li>
             <li onclick="showAdminTab(this, 'user-controller')">用户管理</li>
             <li onclick="showAdminTab(this, 'video-controller')">视频资料管理</li>
+            <li onclick="showAdminTab(this, 'system-logs')">系统日志</li>
         </ul>
     </aside>
 
@@ -122,19 +123,21 @@
                     <form onsubmit="submitVideoForm(event)">
                         <input type="hidden" id="formVideoId">
                         视频名称：<input id="formVideoName"><br>
-                        封面URL：<input id="formVideoCover"><br>
-                        视频URL：<input id="formVideoUrl"><br>
-                        上传本地视频：<input type="file" id="formVideoFile" accept="video/mp4" onchange="uploadVideoFile()"><br>
-                        上传用户：<select id="formUserId">
-                            <option value="">请选择用户</option>
-                        </select><br>
-                        分类：<input id="formCategory"><br>
-                        <br>
+                        封面上传：<input type="file" id="formVideoCoverFile" accept="image/*"><br>
+                        视频上传：<input type="file" id="formVideoFile" accept="video/*"><br>
+                        分类：
+                        <select id="formCategory">
+                            <option value="running">running</option>
+                            <option value="basketball">basketball</option>
+                        </select><br><br>
                         <button type="submit">提交</button>
                         <button type="button" onclick="closeVideoModal()">取消</button>
                     </form>
                 </div>
             </div>
+        </div>
+        <div id="system-logs" class="profile-card">
+            <h2>系统日志</h2>
         </div>
     </main>
 </div>

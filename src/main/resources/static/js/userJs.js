@@ -215,33 +215,54 @@ function editVideo(video) {
     document.getElementById('videoModalTitle').innerText = "编辑视频";
     document.getElementById('formVideoId').value = video.videoId;
     document.getElementById('formVideoName').value = video.videoName;
-    document.getElementById('formVideoCover').value = video.videoCover;
-    document.getElementById('formVideoUrl').value = video.videoUrl;
     document.getElementById('formCategory').value = video.category;
 
-    // 先清空用户下拉框，再重新加载并设置选中
-    document.getElementById('formUserId').innerHTML = '<option value="">请选择用户</option>';
+    // 设置封面预览
+    const preview = document.getElementById('coverPreview');
+    preview.src = video.videoCover;
+    preview.style.display = 'block';
 
-    fetch('/admin/api/users')
-        .then(response => response.json())
-        .then(users => {
-            const select = document.getElementById('formUserId');
-            users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.userId;
-                option.text = user.username;
-                if (user.userId === video.userId) {
-                    option.selected = true;
-                }
-                select.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error('加载用户列表失败:', error);
-        });
+    // 清空文件输入框（防止旧文件残留）
+    document.getElementById('formVideoFile').value = '';
+    document.getElementById('formVideoCoverFile').value = '';
+
+    // 替换表单提交事件为编辑函数
+    const form = document.querySelector("#videoModal form");
+    form.onsubmit = updateVideo;
 
     document.getElementById('videoModal').style.display = 'block';
 }
+
+async function updateVideo(event) {
+    event.preventDefault();
+
+    const videoId = document.getElementById("formVideoId").value;
+    const formData = new FormData();
+    formData.append("videoId", videoId);
+    formData.append("videoName", document.getElementById("formVideoName").value);
+    formData.append("category", document.getElementById("formCategory").value);
+
+    const videoFile = document.getElementById("formVideoFile").files[0];
+    const coverFile = document.getElementById("formVideoCoverFile").files[0];
+    if (videoFile) formData.append("videoFile", videoFile);
+    if (coverFile) formData.append("coverFile", coverFile);
+
+    try {
+        const response = await fetch("/api/videos/update", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) throw new Error("编辑失败");
+
+        alert("修改成功！");
+        closeVideoModal();
+        loadVideos();
+    } catch (err) {
+        alert("修改失败：" + err.message);
+    }
+}
+
 
 function searchVideos() {
     const keyword = document.getElementById('videoSearchInput').value.toLowerCase();
@@ -273,4 +294,32 @@ function deleteVideo(videoId) {
     }
 }
 
+//封面提取
+document.getElementById('coverForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const statusEl = document.getElementById('coverStatus');
+    statusEl.innerText = '正在生成封面，请稍候...';
 
+    try {
+        const response = await fetch('/api/cover/generate', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('请求失败');
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'cover.jpg';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        statusEl.innerText = '封面已成功生成并下载到本地';
+    } catch (error) {
+        statusEl.innerText = '封面生成失败，请重试';
+        console.error('封面生成错误:', error);
+    }
+});

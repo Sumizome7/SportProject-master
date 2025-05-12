@@ -215,42 +215,42 @@ function loadVideos() {
         });
 }
 
-function submitVideoForm(event) {
+async function submitVideoForm(event) {
     event.preventDefault();
-    const video = {
-        videoId: document.getElementById('formVideoId').value || undefined,
-        videoName: document.getElementById('formVideoName').value,
-        videoCover: document.getElementById('formVideoCover').value,
-        videoUrl: document.getElementById('formVideoUrl').value,
-        userId: document.getElementById('formUserId').value,
-        category: document.getElementById('formCategory').value,
-        uploadTime: new Date().toISOString()
-    };
-    const method = video.videoId ? 'PUT' : 'POST';
 
-    console.log(video);
+    const formData = new FormData();
+    formData.append("videoName", document.getElementById("formVideoName").value);
+    formData.append("videoFile", document.getElementById("formVideoFile").files[0]);
+    formData.append("coverFile", document.getElementById("formVideoCoverFile").files[0]);
+    formData.append("category", document.getElementById("formCategory").value);
 
-    fetch('/admin/api/videos', {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(video)
-    }).then(() => {
+    try {
+        const response = await fetch("/api/videos/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error("上传失败，状态码：" + response.status);
+        }
+
+        alert("上传成功！");
         closeVideoModal();
-        loadVideos();
-    });
+        loadVideos(); // 重新加载视频列表
+    } catch (error) {
+        console.error("上传失败:", error);
+        alert("上传失败，请检查网络或文件格式");
+    }
 }
+
 
 function openVideoModal() {
     document.getElementById('videoModalTitle').innerText = "添加视频";
     document.getElementById('formVideoId').value = "";
     document.getElementById('formVideoName').value = "";
-    document.getElementById('formVideoCover').value = "";
-    document.getElementById('formVideoUrl').value = "";
-    document.getElementById('formUserId').value = "";
-    document.getElementById('formCategory').value = "";
-
-    loadUserOptions();
-
+    document.getElementById('formVideoFile').value = "";
+    document.getElementById('formVideoFile').value = "";
+    document.getElementById('formCategory').value = "running";
     document.getElementById('videoModal').style.display = 'block';
 }
 

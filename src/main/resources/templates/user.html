@@ -24,7 +24,7 @@
         <ul class="menu">
             <li class="menu-item" onclick="showSection('user-home', event)">系统首页</li>
             <li class="menu-item" onclick="showSection('video-manage', event)">视频管理</li>
-
+            <li class="menu-item" onclick="showSection('video-editor', event)">创作者中心</li>
             <li class="menu-item" onclick="showVideoView(event)">
                 视频查看
                 <ul class="submenu" id="videoSubmenu">
@@ -91,6 +91,8 @@
                         <input type="hidden" id="formVideoId">
                         视频名称：<input id="formVideoName"><br>
                         封面上传：<input type="file" id="formVideoCoverFile" accept="image/*"><br>
+                        封面预览：<br>
+                        <img id="coverPreview" src="" style="width: 150px; display: none;"><br>
                         视频上传：<input type="file" id="formVideoFile" accept="video/*"><br>
                         分类：
                         <select id="formCategory">
@@ -103,7 +105,27 @@
                 </div>
             </div>
         </div>
+        <div id="video-editor" class="tab-section">
+            <h2>创作者中心</h2>
+            <!-- 模块 1：视频封面提取 -->
+            <section class="editor-module">
+                <h3>📸 视频封面提取</h3>
+                <form id="coverForm" enctype="multipart/form-data">
+                    <label for="videoFile">选择本地视频文件：</label><br>
+                    <input type="file" id="videoFile" name="videoFile" accept="video/*" required><br><br>
+                    <button type="submit">生成封面</button>
+                </form>
+                <p id="coverStatus"></p>
+            </section>
 
+            <hr style="margin: 2rem 0;">
+
+            <!-- 模块 2：精彩瞬间生成（占位） -->
+            <section class="editor-module">
+                <h3>🎬 精彩瞬间生成（开发中）</h3>
+                <p>该功能正在开发中，敬请期待！</p>
+            </section>
+        </div>
         <div id="video-view" class="tab-section">视频查看</div>
     </main>
 </div>

@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/api/videos")
-public class VideoAdminController {
+public class AdminVideoController {
 
     @Autowired
     private VideoService videoService;

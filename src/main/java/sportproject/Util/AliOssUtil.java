@@ -24,7 +24,7 @@ public class AliOssUtil {
     }
 
     public String upload(byte[] bytes, String objectName) {
-        String endpoint = "oss-cn-hangzhou.aliyuncs.com";
+//        String endpoint = "oss-cn-hangzhou.aliyuncs.com";
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         try {
             ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(bytes));
@@ -39,5 +39,21 @@ public class AliOssUtil {
         }
 
         return "http://" + bucketName + "." + endpoint + "/" + objectName;
+    }
+
+    public void delete(String fullUrl) {
+        String objectName = fullUrl.replace("http://" + bucketName + "." + endpoint + "/", "");
+
+        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+        try {
+            ossClient.deleteObject(bucketName, objectName);
+            log.info("删除成功：{}", objectName);
+        } catch (Exception e) {
+            log.error("删除失败：{}", e.getMessage());
+        } finally {
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+        }
     }
 }

@@ -58,6 +58,6 @@ public interface VideoMapper extends BaseMapper<Videos> {
     int uploadVideo(Videos video);
 
     //update
-    @Update("UPDATE videos SET video_name = #{videoName}, video_cover = #{videoCover}, category = #{category} WHERE video_id = #{videoId}")
+    @Update("UPDATE videos SET video_name = #{videoName}, video_cover = #{videoCover}, video_url = #{videoUrl}, category = #{category} WHERE video_id = #{videoId}")
     int updateVideo(Videos video);
 }

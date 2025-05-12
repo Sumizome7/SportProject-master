@@ -425,3 +425,16 @@ table#videoTable img {
         white-space: nowrap;
     }
 }
+
+.editor-module {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.editor-module h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
