@@ -1,6 +1,7 @@
 package sportproject.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,6 +64,33 @@ public class UserProfileController {
 
         boolean success = userService.userUpdate(user);
         return success ? ResponseEntity.ok("修改成功") : ResponseEntity.status(500).body("修改失败");
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("未登录或登录已过期");
+        }
+
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        if (currentPassword == null || newPassword == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "密码不能为空"));
+        }
+
+        // 获取数据库中当前密码
+        String dbPassword = userService.userPwd(userId);
+        if (!currentPassword.equals(dbPassword)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "当前密码不正确"));
+        }
+
+        // 更新密码
+        int rows = userService.userPwdUpdate(userId, newPassword);
+        return rows > 0
+                ? ResponseEntity.ok(Map.of("message", "密码修改成功"))
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "密码修改失败"));
     }
 
     @PostMapping("/uploadAvatar")

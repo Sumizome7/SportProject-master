@@ -145,7 +145,6 @@ function handleLogout() {
     }
 }
 
-
 function loadVideos() {
     fetch('/user/api/videos')
         .then(res => res.json())
@@ -220,8 +219,6 @@ function submitVideoForm(event) {
 
     xhr.send(formData);
 }
-
-
 
 function openVideoModal() {
     document.getElementById('videoModalTitle').innerText = "添加视频";
@@ -323,8 +320,6 @@ function updateVideo(event) {
     xhr.send(formData);
 }
 
-
-
 function searchVideos() {
     const keyword = document.getElementById('videoSearchInput').value.toLowerCase();
     const rows = document.querySelectorAll('#videoTable tbody tr');
@@ -382,5 +377,43 @@ document.getElementById('coverForm').addEventListener('submit', async function (
     } catch (error) {
         statusEl.innerText = '封面生成失败，请重试';
         console.error('封面生成错误:', error);
+    }
+});
+
+document.getElementById('highlightForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    const status = document.getElementById("processStatus");
+    status.textContent = "⏳ 正在上传并处理，请稍候...";
+
+    try {
+        const res = await fetch('/api/highlight/generate', {
+            method: 'POST',
+            body: formData
+        });
+
+        const contentType = res.headers.get("Content-Type");
+
+        if (res.ok && contentType === "video/mp4") {
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "highlight_edited_video.mp4";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            status.textContent = "✅ 成功生成并下载精彩瞬间！";
+        } else {
+            const errorText = await res.text(); // 只读一次！
+            status.textContent = "❌ 出错了：" + errorText;
+        }
+
+
+    } catch (err) {
+        console.error(err);
+        status.textContent = "❌ 请求失败：" + err.message;
     }
 });

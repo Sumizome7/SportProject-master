@@ -65,4 +65,11 @@ public interface UserMapper extends BaseMapper<Users> {
     @Select("SELECT * FROM users")
     List<Users> getUserList();
 
+    @Insert("INSERT INTO users (username, password, email, phone, gender, is_admin, created_at, avatarUrl) " +
+            "VALUES (#{userName}, #{password}, #{email}, #{phone}, #{gender}, #{isAdmin}, #{createAt}, #{avatarUrl})")
+    @Options(useGeneratedKeys = true, keyProperty = "userId", keyColumn = "user_id")
+    int addUsersForRegister(Users user);
+
+    @Select("SELECT COUNT(*) FROM users WHERE username = #{userName}")
+    int countByUsername(@Param("userName") String userName);
 }

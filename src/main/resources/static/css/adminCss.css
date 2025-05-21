@@ -1,3 +1,12 @@
+/* === 页面基础样式 === */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen;
+    margin: 0;
+    padding: 0;
+    background: #f9fafb;
+    color: #333;
+}
+
 .main-header {
     background: #2c3e50;
     padding: 1rem 2rem;
@@ -5,15 +14,6 @@
     justify-content: space-between;
     align-items: center;
     color: white;
-}
-
-.user-panel {
-    position: relative;
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #f0f0f0;
-    border-radius: 6px;
-    cursor: pointer;
 }
 
 .user-panel {
@@ -78,6 +78,8 @@
 
 .profile-menu {
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .profile-menu li {
@@ -98,23 +100,20 @@
     font-weight: 600;
 }
 
-/* 主体内容 */
 .profile-content {
     flex: 1;
     padding: 32px;
-    background: #f9fafb;
     overflow-y: auto;
 }
 
-/* 卡片样式微调 */
 .profile-card {
     background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 24px;
-    margin-bottom: 32px;
-    display: none;
+    margin-bottom: 30px;
     border: 1px solid #e5e7eb;
+    display: none;
 }
 
 .profile-card.active {
@@ -123,6 +122,7 @@
 
 .profile-card h2 {
     font-size: 20px;
+    text-align: center;
     color: #111827;
     margin-bottom: 20px;
 }
@@ -186,36 +186,53 @@
     margin-bottom: 0.5rem;
 }
 
-select {
+select,
+input[type="text"], input[type="number"], input[type="email"], input[type="file"], input[type="password"] {
     width: 100%;
     padding: 8px 12px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 6px;
     background-color: #fff;
-    cursor: pointer;
-    position: relative;  /* 保证层级高 */
-    z-index: 10;         /* 防止被其他元素覆盖 */
+    box-sizing: border-box;
 }
 
-/* 确保选项清晰可见 */
 option {
     padding: 10px;
     font-size: 14px;
 }
 
-.profile-card {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+input[type="checkbox"] {
+    margin-top: 6px;
 }
 
-h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* 表格 */
+.table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
 }
 
 table {
@@ -236,60 +253,82 @@ th {
     font-weight: bold;
 }
 
-button {
-    padding: 6px 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 5px;
+/* 弹窗统一样式 */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 480px;
+    max-width: 95%;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
 }
 
-button:hover {
+.modal h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 18px;
+}
+
+.modal form label {
+    font-weight: 600;
+    margin-top: 10px;
+    color: #444;
+}
+
+.modal form input,
+.modal form select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.modal form .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.modal form button {
+    padding: 8px 18px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.modal form button:hover {
     background-color: #0056b3;
 }
 
-input[type="text"], input[type="number"], select {
-    padding: 6px;
-    margin: 5px 0;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-input[type="checkbox"] {
-    margin-top: 10px;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-#userModal, #videoModal {
-    width: 400px;
-    max-width: 90%;
-    border-radius: 10px;
-}
-
-#userModal h3, #videoModal h3 {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-#userModal button, #videoModal button {
-    margin-top: 10px;
-}
-
-#searchIdInput, #videoSearchInput {
-    padding: 6px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 @media (max-width: 600px) {
+    .table-container {
+        max-height: 300px;
+    }
+
     table, thead, tbody, th, td, tr {
         display: block;
     }
@@ -311,5 +350,10 @@ form {
         width: 45%;
         white-space: nowrap;
         font-weight: bold;
+    }
+
+    .modal {
+        width: 90%;
+        padding: 16px;
     }
 }

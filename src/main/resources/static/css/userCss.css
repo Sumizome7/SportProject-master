@@ -438,3 +438,82 @@ table#videoTable img {
     color: #333;
     margin-bottom: 1rem;
 }
+
+#video-editor {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    font-family: "Segoe UI", sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#video-editor h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 24px;
+    color: #2c3e50;
+}
+
+/* 每个功能模块 */
+#video-editor .editor-module {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* 每个模块的标题 */
+#video-editor .editor-module h3 {
+    color: #333;
+    margin-bottom: 1.2rem;
+    font-size: 18px;
+}
+
+/* label 和 input 样式 */
+#video-editor label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+#video-editor input[type="file"],
+#video-editor input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+/* 提交按钮 */
+#video-editor button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#video-editor button:hover {
+    background-color: #0056b3;
+}
+
+/* 提示状态文字 */
+#coverStatus,
+#processStatus {
+    margin-top: 1rem;
+    font-style: italic;
+    color: #555;
+    font-size: 14px;
+}

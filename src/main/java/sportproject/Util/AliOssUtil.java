@@ -4,6 +4,7 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSException;
+import com.aliyun.oss.model.ObjectMetadata;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
@@ -24,10 +25,27 @@ public class AliOssUtil {
     }
 
     public String upload(byte[] bytes, String objectName) {
-//        String endpoint = "oss-cn-hangzhou.aliyuncs.com";
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         try {
-            ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(bytes));
+            // ✅ 判断文件类型
+            String contentType;
+            if (objectName.endsWith(".mp4")) {
+                contentType = "video/mp4";
+            } else if (objectName.endsWith(".jpg") || objectName.endsWith(".jpeg")) {
+                contentType = "image/jpeg";
+            } else if (objectName.endsWith(".png")) {
+                contentType = "image/png";
+            } else {
+                contentType = "application/octet-stream"; // 其他类型
+            }
+
+            // ✅ 设置元数据
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(contentType);
+
+            // ✅ 上传时带上 metadata
+            ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(bytes), metadata);
+
         } catch (OSSException oe) {
             System.out.println("OSS错误：" + oe.getErrorMessage());
         } catch (ClientException ce) {
@@ -40,6 +58,7 @@ public class AliOssUtil {
 
         return "http://" + bucketName + "." + endpoint + "/" + objectName;
     }
+
 
     public void delete(String fullUrl) {
         String objectName = fullUrl.replace("http://" + bucketName + "." + endpoint + "/", "");

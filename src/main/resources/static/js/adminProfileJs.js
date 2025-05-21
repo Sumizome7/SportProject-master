@@ -42,47 +42,52 @@ async function updateBasicInfo() {
         });
 
         if (response.ok) {
-            alert('????????');
+            alert('个人资料更新成功');
         } else {
             const errorText = await response.text();
-            console.error("??????????", errorText);
+            console.error("服务器返回错误内容：", errorText);
             alert(errorText);
         }
     } catch (error) {
-        console.error('????:', error);
+        console.error('更新错误', error);
         alert(error.message);
     }
 }
 
-// ????
+// 修改密码
 async function changePassword() {
     const currentPassword = document.getElementById('currentPassword').value;
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
 
+    // 简单前端校验
     if (newPassword !== confirmPassword) {
-        alert('???????????');
+        alert('两次输入的新密码不一致');
         return;
     }
 
     try {
-        const response = await fetch('/api/user/password', {
+        const response = await fetch('/admin/profile/password', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({currentPassword, newPassword})
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
         });
 
+        const result = await response.json();
+
         if (response.ok) {
-            alert('????????????');
+            alert(result.message || '密码修改成功，请重新登录');
             window.location.href = '/logout';
         } else {
-            const error = await response.json();
-            throw new Error(error.message || '??????');
+            throw new Error(result.message || '密码修改失败');
         }
     } catch (error) {
-        console.error('??????:', error);
+        console.error('修改密码失败:', error);
         alert(error.message);
     }
 }

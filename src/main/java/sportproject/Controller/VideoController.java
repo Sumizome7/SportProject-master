@@ -55,8 +55,8 @@ public class VideoController {
             Map<String, Object> videoData = new HashMap<>();
             videoData.put("id", v.getVideoId());
             videoData.put("title", v.getVideoName());
-            videoData.put("cover", "/videos/cover/" + v.getVideoCover());
-            videoData.put("url", "/videos/clips/" + v.getVideoUrl());
+            videoData.put("cover", v.getVideoCover());
+            videoData.put("url", v.getVideoUrl());
             videoData.put("category", v.getCategory());
             videoData.put("uploadTime", v.getUploadTime());
             return videoData;

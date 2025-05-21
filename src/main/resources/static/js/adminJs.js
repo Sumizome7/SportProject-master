@@ -35,7 +35,10 @@ function showAdminTab(element, tabId) {
         loadUsers();
     } else if (tabId === 'video-controller') {
         loadVideos();
+    } else if (tabId === 'system-logs') {
+        loadAuditLogs(); // 加载日志
     }
+
 }
 
 function loadUsers() {
@@ -45,14 +48,17 @@ function loadUsers() {
             const tbody = document.querySelector('#userTable tbody');
             tbody.innerHTML = '';
             users.forEach(user => {
+                const formattedTime = user.createAt
+                    ? new Date(user.createAt).toLocaleString()
+                    : '无';
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${user.userId}</td>
                         <td>${user.userName}</td>
                         <td>${user.password}</td>
                         <td>${user.isAdmin ? '是' : '否'}</td>
-                        <td>${user.createAt}</td>
-                        <td>${user.createAt}</td>
+                        <td>${formattedTime}</td>
                         <td>${user.phone}</td>
                         <td>${user.email}</td>
                         <td>${user.gender}</td>
@@ -64,6 +70,7 @@ function loadUsers() {
             });
         });
 }
+
 
 function searchUserById() {
     const id = document.getElementById('searchIdInput').value;
@@ -215,7 +222,7 @@ function loadVideos() {
         });
 }
 
-async function submitVideoForm(event) {
+function submitVideoForm(event) {
     event.preventDefault();
 
     const formData = new FormData();
@@ -224,25 +231,49 @@ async function submitVideoForm(event) {
     formData.append("coverFile", document.getElementById("formVideoCoverFile").files[0]);
     formData.append("category", document.getElementById("formCategory").value);
 
-    try {
-        const response = await fetch("/api/videos/upload", {
-            method: "POST",
-            body: formData
-        });
+    const xhr = new XMLHttpRequest();
+    const progressText = document.getElementById('uploadStatus');
+    progressText.innerText = '准备上传...';
+    progressText.style.display = 'block';
 
-        if (!response.ok) {
-            throw new Error("上传失败，状态码：" + response.status);
+    xhr.open("POST", "/api/videos/upload");
+
+    // ✅ 上传进度监听
+    xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            progressText.innerText = `上传中... ${percent}%`;
+
+            // ✅ 更新进度条
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const progressBar = document.getElementById('uploadProgressBar');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = percent + '%';
         }
+    };
 
-        alert("上传成功！");
-        closeVideoModal();
-        loadVideos(); // 重新加载视频列表
-    } catch (error) {
-        console.error("上传失败:", error);
-        alert("上传失败，请检查网络或文件格式");
-    }
+    // ✅ 成功后
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            alert('上传成功！');
+            closeVideoModal();
+            loadVideos();
+        } else {
+            alert('上传失败：' + xhr.statusText);
+        }
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    // ✅ 错误处理
+    xhr.onerror = function () {
+        alert('上传失败，请检查网络');
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    xhr.send(formData);
 }
-
 
 function openVideoModal() {
     document.getElementById('videoModalTitle').innerText = "添加视频";
@@ -251,6 +282,11 @@ function openVideoModal() {
     document.getElementById('formVideoFile').value = "";
     document.getElementById('formVideoFile').value = "";
     document.getElementById('formCategory').value = "running";
+
+    // ✅ 隐藏进度提示
+    document.getElementById('uploadStatus').style.display = 'none';
+    document.getElementById('uploadProgressContainer').style.display = 'none';
+
     document.getElementById('videoModal').style.display = 'block';
 }
 
@@ -262,32 +298,81 @@ function editVideo(video) {
     document.getElementById('videoModalTitle').innerText = "编辑视频";
     document.getElementById('formVideoId').value = video.videoId;
     document.getElementById('formVideoName').value = video.videoName;
-    document.getElementById('formVideoCover').value = video.videoCover;
-    document.getElementById('formVideoUrl').value = video.videoUrl;
     document.getElementById('formCategory').value = video.category;
 
-    // 先清空用户下拉框，再重新加载并设置选中
-    document.getElementById('formUserId').innerHTML = '<option value="">请选择用户</option>';
+    // 设置封面预览
+    const preview = document.getElementById('coverPreview');
+    preview.src = video.videoCover;
+    preview.style.display = 'block';
 
-    fetch('/admin/api/users')
-        .then(response => response.json())
-        .then(users => {
-            const select = document.getElementById('formUserId');
-            users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.userId;
-                option.text = user.username;
-                if (user.userId === video.userId) {
-                    option.selected = true; // 选中当前的用户
-                }
-                select.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error('加载用户列表失败:', error);
-        });
+    // 清空文件输入框（防止旧文件残留）
+    document.getElementById('formVideoFile').value = '';
+    document.getElementById('formVideoCoverFile').value = '';
+
+    // 替换表单提交事件为编辑函数
+    const form = document.querySelector("#videoModal form");
+    form.onsubmit = updateVideo;
+
+    // ✅ 隐藏进度提示
+    document.getElementById('uploadStatus').style.display = 'none';
+    document.getElementById('uploadProgressContainer').style.display = 'none';
 
     document.getElementById('videoModal').style.display = 'block';
+}
+
+function updateVideo(event) {
+    event.preventDefault();
+
+    const videoId = document.getElementById("formVideoId").value;
+    const formData = new FormData();
+    formData.append("videoId", videoId);
+    formData.append("videoName", document.getElementById("formVideoName").value);
+    formData.append("category", document.getElementById("formCategory").value);
+
+    const videoFile = document.getElementById("formVideoFile").files[0];
+    const coverFile = document.getElementById("formVideoCoverFile").files[0];
+    if (videoFile) formData.append("videoFile", videoFile);
+    if (coverFile) formData.append("coverFile", coverFile);
+
+    const xhr = new XMLHttpRequest();
+    const progressText = document.getElementById('uploadStatus');
+    progressText.innerText = '准备上传...';
+    progressText.style.display = 'block';
+
+    xhr.open("POST", "/api/videos/update");
+
+    xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            progressText.innerText = `上传中... ${percent}%`;
+
+            // ✅ 更新进度条
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const progressBar = document.getElementById('uploadProgressBar');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = percent + '%';
+        }
+    };
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            alert('修改成功！');
+            closeVideoModal();
+            loadVideos();
+        } else {
+            alert('修改失败：' + xhr.statusText);
+        }
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    xhr.onerror = function () {
+        alert('修改失败，请检查网络');
+        progressText.style.display = 'none';
+        document.getElementById('uploadProgressContainer').style.display = 'none';
+    };
+
+    xhr.send(formData);
 }
 
 function searchVideos() {
@@ -307,7 +392,7 @@ function searchVideos() {
 
 function deleteVideo(videoId) {
     if (confirm('确定要删除该视频吗？')) {
-        fetch(`/admin/api/videos/${videoId}`, {
+        fetch(`/user/api/videos/${videoId}`, {
             method: 'DELETE'
         }).then(response => {
             if (!response.ok) {
@@ -318,24 +403,6 @@ function deleteVideo(videoId) {
             alert('删除失败：' + error.message);
         });
     }
-}
-
-function uploadVideoFile(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    fetch('/admin/api/upload/video', {
-        method: 'POST',
-        body: formData
-    })
-        .then(res => res.text())
-        .then(url => {
-            document.getElementById('formVideoUrl').value = url;
-        })
-        .catch(err => {
-            console.error('上传失败:', err);
-            alert('视频上传失败，请稍后重试');
-        });
 }
 
 function loadUserOptions() {
@@ -357,4 +424,27 @@ function loadUserOptions() {
             });
         })
         .catch(err => console.error('加载用户列表失败:', err));
+}
+
+function loadAuditLogs() {
+    fetch('/admin/api/users/logs')
+        .then(res => res.json())
+        .then(logs => {
+            const tbody = document.querySelector('#logTable tbody');
+            tbody.innerHTML = '';
+            logs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.logId}</td>
+                    <td>${log.userId}</td>
+                    <td>${log.actionType}</td>
+                    <td>${log.targetId}</td>
+                    <td>${new Date(log.createdAt).toLocaleString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('日志加载失败:', error);
+        });
 }

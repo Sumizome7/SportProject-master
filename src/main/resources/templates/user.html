@@ -125,10 +125,19 @@
 
             <hr style="margin: 2rem 0;">
 
-            <!-- 模块 2：精彩瞬间生成（占位） -->
+            <!-- 模块 2：精彩瞬间生成 -->
             <section class="editor-module">
-                <h3>🎬 精彩瞬间生成（开发中）</h3>
-                <p>该功能正在开发中，敬请期待！</p>
+                <h3>🎬 精彩瞬间生成</h3>
+                <form id="highlightForm" enctype="multipart/form-data">
+                    <label for="rankInput">请输入该选手的名次（例如：1 表示第一名）:</label><br>
+                    <input type="number" id="rankInput" name="rankInput" min="1" required><br><br>
+
+                    <label for="videoFile">选择要上传的视频文件:</label>
+                    <input type="file" id="videoFile" name="videoFile" accept="video/*" required><br><br>
+
+                    <button type="submit">开始生成精彩瞬间</button>
+                </form>
+                <p id="processStatus"></p>
             </section>
         </div>
         <div id="video-view" class="tab-section">视频查看</div>
