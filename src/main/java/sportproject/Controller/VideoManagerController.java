@@ -60,6 +60,13 @@ public class VideoManagerController {
             video.setUploadTime(new Timestamp(System.currentTimeMillis()));
 
             videoService.uploadVideos(video);
+
+            // ✅ 写入视频共享表（默认 is_shared = false）
+            // 前提：uploadVideos() 方法插入后 videoId 被设置进了 video 对象
+            int videoId = video.getVideoId();
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            videoService.videoUploadShared(videoId, false, now, userId);
+
             return ResponseEntity.ok().build();
 
         } catch (Exception e) {

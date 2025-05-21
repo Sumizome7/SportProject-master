@@ -6,14 +6,69 @@
     <link href="../static/css/loginCss.css" rel="stylesheet"/>
 </head>
 <body>
-<h1>Login</h1>
-<form action="/login" method="post">
-    <input type="text" name="userId" placeholder="UserID" required />
-    <input type="password" name="password" placeholder="Password" required />
-    <button type="submit">Login</button>
-</form>
+<div class="login-container">
+    <h1>用户登录</h1>
+    <form action="/login" method="post">
+        <div>
+            <input type="text" name="userId" placeholder="用户ID" required />
+        </div>
 
-<!-- 错误消息显示 -->
-<div th:if="${error}" class="error-message" th:text="${error}"></div>
+        <div>
+            <input type="password" name="password" placeholder="密码" required />
+        </div>
+
+        <!-- 验证码区域 -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <img id="captchaImage" src="/captcha" alt="验证码" style="height: 40px; cursor: pointer;" onclick="refreshCaptcha()" />
+            <input type="text" name="captcha" placeholder="输入验证码" required />
+        </div>
+
+        <div>
+            <button type="submit">登录</button>
+        </div>
+    </form>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <div class="login-links">
+        <a href="/register">注册新用户</a> | <a href="javascript:void(0);" onclick="handleForgotPassword()">忘记密码？</a>
+    </div>
+</div>
+<script>
+    function refreshCaptcha() {
+        document.getElementById('captchaImage').src = '/captcha?ts=' + new Date().getTime();
+    }
+    function handleForgotPassword() {
+        const userIdStr = prompt("请输入您的用户ID：");
+        if (!userIdStr) return;
+
+        const userId = parseInt(userIdStr);
+        if (isNaN(userId)) {
+            alert("❌ 用户ID格式不正确！");
+            return;
+        }
+
+        const confirmReset = confirm("是否将该用户的密码重置为初始密码123？");
+        if (!confirmReset) return;
+
+        fetch('/api/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId })
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("✅ 密码已重置为123，请尽快修改！");
+                } else {
+                    return response.text().then(msg => {
+                        alert("❌ 重置失败：" + msg);
+                    });
+                }
+            })
+            .catch(err => {
+                alert("请求失败：" + err);
+            });
+    }
+</script>
 </body>
 </html>

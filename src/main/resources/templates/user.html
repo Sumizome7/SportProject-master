@@ -24,6 +24,7 @@
         <ul class="menu">
             <li class="menu-item" onclick="showSection('user-home', event)">系统首页</li>
             <li class="menu-item" onclick="showSection('video-manage', event)">视频管理</li>
+            <li class="menu-item" onclick="showSection('share-management', event)">共享视频</li>
             <li class="menu-item" onclick="showSection('video-editor', event)">创作者中心</li>
             <li class="menu-item" onclick="showVideoView(event)">
                 视频查看
@@ -33,6 +34,7 @@
                     <li class="submenu-item" data-category="basketball" onclick="filterByCategory(event)">篮球</li>
                 </ul>
             </li>
+            <li class="menu-item" onclick="showSection('video-share', event)">共享视频</li>
         </ul>
     </aside>
 
@@ -110,6 +112,24 @@
                 </div>
             </div>
         </div>
+        <div id="share-management" class="tab-section">
+            <h3>我的视频共享状态</h3>
+            <table id="userSharedTable">
+                <thead>
+                <tr>
+                    <th>视频ID</th>
+                    <th>视频名称</th>
+                    <th>是否共享</th>
+                    <th>共享时间</th>
+                    <th>设置人</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 数据渲染在这里 -->
+                </tbody>
+            </table>
+        </div>
         <div id="video-editor" class="tab-section">
             <h2>创作者中心</h2>
             <!-- 模块 1：视频封面提取 -->
@@ -125,13 +145,27 @@
 
             <hr style="margin: 2rem 0;">
 
-            <!-- 模块 2：精彩瞬间生成（占位） -->
+            <!-- 模块 2：精彩瞬间生成 -->
             <section class="editor-module">
-                <h3>🎬 精彩瞬间生成（开发中）</h3>
-                <p>该功能正在开发中，敬请期待！</p>
+                <h3>🎬 精彩瞬间生成</h3>
+                <form id="highlightForm" enctype="multipart/form-data">
+                    <label for="rankInput">请输入该选手的名次（例如：1 表示第一名）:</label><br>
+                    <input type="number" id="rankInput" name="rankInput" min="1" required><br><br>
+
+                    <label for="videoFile">选择要上传的视频文件:</label>
+                    <input type="file" id="videoFile" name="videoFile" accept="video/*" required><br><br>
+
+                    <button type="submit">开始生成精彩瞬间</button>
+                </form>
+                <p id="processStatus"></p>
             </section>
         </div>
         <div id="video-view" class="tab-section">视频查看</div>
+        <div id="video-share" class="tab-section">
+            <h2>共享视频</h2>
+            <input type="text" id="sharedVideoSearchInput" oninput="searchSharedVideos()" placeholder="搜索共享视频...">
+            <div id="sharedVideoList"></div>
+        </div>
     </main>
 </div>
 

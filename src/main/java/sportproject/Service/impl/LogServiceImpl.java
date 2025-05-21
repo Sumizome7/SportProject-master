@@ -7,6 +7,8 @@ import sportproject.Entity.Logs;
 import sportproject.Mapper.LogMapper;
 import sportproject.Service.LogService;
 
+import java.util.List;
+
 @Service
 public class LogServiceImpl extends ServiceImpl<LogMapper, Logs> implements LogService {
 
@@ -16,5 +18,10 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Logs> implements LogS
     @Override
     public int addLogs(Logs log) {
         return logMapper.insert(log);
+    }
+
+    @Override
+    public List<Logs> logList() {
+        return logMapper.getlogList();
     }
 }

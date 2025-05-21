@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
+import sportproject.Entity.Logs;
 import sportproject.Entity.Users;
+import sportproject.Service.LogService;
 import sportproject.Service.UserService;
 
 import java.util.List;
@@ -18,6 +20,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LogService logService;
 
     @GetMapping
     public List<Users> getAllUsers() {
@@ -66,6 +71,11 @@ public class AdminController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("更新失败");
         }
+    }
+
+    @GetMapping("/logs")
+    public List<Logs> getAuditLogs() {
+        return logService.logList();
     }
 
 }

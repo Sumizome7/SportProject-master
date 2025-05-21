@@ -1,57 +1,85 @@
-/* ?? CSS ?? */
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f2f4f8;
     margin: 0;
-    background-color: #f0f2f5;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 360px;
 }
 
 h1 {
-    color: #1877f2;
-    margin-bottom: 2rem;
+    text-align: center;
+    color: #333333;
+    margin-bottom: 24px;
 }
 
-form {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 300px;
+form > div {
+    margin-bottom: 16px;
 }
 
-input {
+input[type="text"],
+input[type="password"],
+input[type="text"][name="captcha"] {
     width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #dddfe2;
-    border-radius: 6px;
-    font-size: 16px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
     box-sizing: border-box;
+    font-size: 14px;
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    margin-top: 1rem;
-    background-color: #1877f2;
+    background-color: #28a745;
     color: white;
-    border: none;
-    border-radius: 6px;
+    padding: 10px 12px;
     font-size: 16px;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 button:hover {
-    background-color: #166fe5;
+    background-color: #218838;
 }
 
 .error-message {
-    color: #ff4444;
-    margin-top: 1rem;
+    color: red;
     text-align: center;
+    margin-top: 12px;
     font-weight: bold;
+}
+
+div[style*="margin-top: 16px"] {
+    text-align: center;
+    font-size: 14px;
+}
+
+.login-links {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.login-links a {
+    color: #666;
+    text-decoration: none;
+    margin: 0 8px;
+    transition: color 0.2s ease;
+    font-size: 14px;
+}
+
+.login-links a:hover {
+    color: #007bff;
+    text-decoration: underline;
 }

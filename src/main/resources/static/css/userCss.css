@@ -438,3 +438,148 @@ table#videoTable img {
     color: #333;
     margin-bottom: 1rem;
 }
+
+#video-editor {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    font-family: "Segoe UI", sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#video-editor h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 24px;
+    color: #2c3e50;
+}
+
+/* 每个功能模块 */
+#video-editor .editor-module {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* 每个模块的标题 */
+#video-editor .editor-module h3 {
+    color: #333;
+    margin-bottom: 1.2rem;
+    font-size: 18px;
+}
+
+/* label 和 input 样式 */
+#video-editor label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+#video-editor input[type="file"],
+#video-editor input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+/* 提交按钮 */
+#video-editor button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#video-editor button:hover {
+    background-color: #0056b3;
+}
+
+/* 提示状态文字 */
+#coverStatus,
+#processStatus {
+    margin-top: 1rem;
+    font-style: italic;
+    color: #555;
+    font-size: 14px;
+}
+
+.shared-video-card {
+    display: inline-block;
+    width: 200px;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background-color: #fff;
+}
+
+.shared-video-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 共享视频表格统一样式 */
+#userSharedTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+#userSharedTable thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#userSharedTable th, #userSharedTable td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+#userSharedTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#userSharedTable tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 表格标题加粗 */
+#userSharedTable th {
+    font-weight: 600;
+}
+
+/* 共享状态文字颜色区分 */
+#userSharedTable td:nth-child(3) {
+    font-weight: 600;
+}
+
+#userSharedTable td:nth-child(3):contains("是") {
+    color: #28a745; /* 绿色代表共享 */
+}
+
+#userSharedTable td:nth-child(3):contains("否") {
+    color: #dc3545; /* 红色代表未共享 */
+}
+

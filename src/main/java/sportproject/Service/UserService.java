@@ -38,9 +38,15 @@ public interface UserService extends IService<Users> {
 
     int addUsers(Users user);
 
+    int registerUser(Users user);
+
     List<Users> allUsers();
 
     int deleteUsers(int userId);
 
     int userPwdUpdate(int userId, String password);
+
+    boolean isUsernameTaken(String userName);
+
+    int addbyRegister(Users user);
 }

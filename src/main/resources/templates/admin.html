@@ -74,33 +74,38 @@
                 </div>
             </div>
 
-            <table id="userTable" border="1" style="width: 100%; border-collapse: collapse;">
-                <thead>
-                <tr>
-                    <th>ID</th><th>用户名</th><th>密码</th><th>是否管理员</th><th>创建时间</th>
-                    <th>电话</th><th>邮箱</th><th>性别</th><th>操作</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-container">
+                <table id="userTable" border="1" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                    <tr>
+                        <th>ID</th><th>用户名</th><th>密码</th><th>是否管理员</th><th>创建时间</th>
+                        <th>电话</th><th>邮箱</th><th>性别</th><th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
 
             <!-- 添加/编辑弹窗 -->
-            <div id="userModal" style="display: none; position: fixed; top: 20%; left: 30%; background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 999;">
+            <div id="userModal" class="modal" style="display: none;">
                 <h3 id="modalTitle">添加用户</h3>
                 <form onsubmit="submitUserForm(event)">
                     <input type="hidden" id="formUserId">
-                    用户名：<input type="text" id="formUserName"><br>
-                    密码：<input type="text" id="formPassword"><br>
-                    是否管理员：<input type="checkbox" id="formIsAdmin"><br>
-                    电话：<input type="text" id="formPhone"><br>
-                    邮箱：<input type="text" id="formEmail"><br>
-                    性别：<input type="text" id="formGender"><br>
-                    头像URL：<input type="text" id="formAvatar"><br>
 
-                    <span id="createAtDisplay" style="display:block; margin-top: 10px;"></span><br>
+                    <label>用户名：<input type="text" id="formUserName"></label>
+                    <label>密码：<input type="text" id="formPassword"></label>
+                    <label><input type="checkbox" id="formIsAdmin"> 是否管理员</label>
+                    <label>电话：<input type="text" id="formPhone"></label>
+                    <label>邮箱：<input type="text" id="formEmail"></label>
+                    <label>性别：<input type="text" id="formGender"></label>
+                    <label>头像URL：<input type="text" id="formAvatar"></label>
 
-                    <button type="submit">提交</button>
-                    <button type="button" onclick="closeUserModal()">取消</button>
+                    <span id="createAtDisplay" style="margin: 10px 0; font-size: 13px; color: #888;"></span>
+
+                    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+                        <button type="submit">提交</button>
+                        <button type="button" onclick="closeUserModal()">取消</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -124,12 +129,18 @@
                         <input type="hidden" id="formVideoId">
                         视频名称：<input id="formVideoName"><br>
                         封面上传：<input type="file" id="formVideoCoverFile" accept="image/*"><br>
+                        封面预览：<br>
+                        <img id="coverPreview" src="" style="width: 150px; display: none;"><br>
                         视频上传：<input type="file" id="formVideoFile" accept="video/*"><br>
                         分类：
                         <select id="formCategory">
                             <option value="running">running</option>
                             <option value="basketball">basketball</option>
                         </select><br><br>
+                        <p id="uploadStatus" style="display: none; color: green;"></p>
+                        <div id="uploadProgressContainer" style="width: 100%; background: #eee; border-radius: 5px; height: 10px; margin-top: 10px; display: none;">
+                            <div id="uploadProgressBar" style="width: 0%; height: 100%; background: linear-gradient(to right, #4facfe, #00f2fe); border-radius: 5px; transition: width 0.3s;"></div>
+                        </div>
                         <button type="submit">提交</button>
                         <button type="button" onclick="closeVideoModal()">取消</button>
                     </form>
@@ -138,6 +149,22 @@
         </div>
         <div id="system-logs" class="profile-card">
             <h2>系统日志</h2>
+            <div class="table-container">
+                <table id="logTable">
+                    <thead>
+                    <tr>
+                        <th>日志ID</th>
+                        <th>用户ID</th>
+                        <th>操作类型</th>
+                        <th>目标ID</th>
+                        <th>操作时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 日志数据将由 JS 动态填充 -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 </div>

@@ -1,8 +1,10 @@
 package sportproject.Service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import sportproject.Entity.VideoShared;
 import sportproject.Entity.Videos;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -49,4 +51,16 @@ public interface VideoService extends IService<Videos> {
     int updateVideos(Videos video);
 
     List<Videos> videoForUsers(int userId);
+
+    int videoUploadShared(int videoId, boolean isShared, Timestamp sharedAt, int sharedBy);
+
+    int videoDeleteShared(int videoId);
+
+    int videoUpdateShared(boolean isShared, Timestamp sharedAt, int sharedBy, int videoId);
+
+    List<Videos> videoShared();
+
+    List<VideoShared> videoUserShared(int userId);
+
+    List<VideoShared> videoSharedInfo();
 }

@@ -2,11 +2,13 @@ package sportproject.Service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import sportproject.Entity.VideoShared;
 import sportproject.Entity.Videos;
 import sportproject.Mapper.VideoMapper;
 import sportproject.Service.VideoService;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -83,5 +85,35 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Videos> implement
     @Override
     public List<Videos> videoForUsers(int userId) {
         return videoMapper.getVideosByUserId(userId);
+    }
+
+    @Override
+    public int videoUploadShared(int videoId, boolean isShared, Timestamp sharedAt, int sharedBy) {
+        return videoMapper.uploadVideoShare(videoId, isShared, sharedAt, sharedBy);
+    }
+
+    @Override
+    public int videoDeleteShared(int videoId) {
+        return videoMapper.deleteVideoShare(videoId);
+    }
+
+    @Override
+    public int videoUpdateShared(boolean isShared, Timestamp sharedAt, int sharedBy,int videoId) {
+        return videoMapper.updateVideoShare(isShared, sharedAt, sharedBy, videoId);
+    }
+
+    @Override
+    public List<Videos> videoShared() {
+        return videoMapper.getAllSharedVideos();
+    }
+
+    @Override
+    public List<VideoShared> videoUserShared(int userId) {
+        return videoMapper.getUserShared(userId);
+    }
+
+    @Override
+    public List<VideoShared> videoSharedInfo() {
+        return videoMapper.getAllShared();
     }
 }

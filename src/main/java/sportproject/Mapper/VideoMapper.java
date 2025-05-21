@@ -3,8 +3,10 @@ package sportproject.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import sportproject.Entity.Users;
+import sportproject.Entity.VideoShared;
 import sportproject.Entity.Videos;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -55,9 +57,28 @@ public interface VideoMapper extends BaseMapper<Videos> {
     //insert
     @Insert("INSERT INTO videos (video_id, video_name, video_cover, upload_time, video_url, user_id, category) " +
             "VALUES (#{videoId}, #{videoName}, #{videoCover}, #{uploadTime}, #{videoUrl}, #{userId}, #{category})")
+    @Options(useGeneratedKeys = true, keyProperty = "videoId")
     int uploadVideo(Videos video);
 
     //update
     @Update("UPDATE videos SET video_name = #{videoName}, video_cover = #{videoCover}, video_url = #{videoUrl}, category = #{category} WHERE video_id = #{videoId}")
     int updateVideo(Videos video);
+
+    @Insert("INSERT INTO video_share (video_id, is_shared, shared_at, shared_by) VALUES (#{videoId}, #{isShared}, #{sharedAt}, #{sharedBy})")
+    int uploadVideoShare(@Param("videoId") int videoId, @Param("isShared") boolean isShared, @Param("sharedAt") Timestamp sharedAt, @Param("sharedBy") int sharedBy);
+
+    @Delete("DELETE FROM video_share WHERE video_id = #{videoId}")
+    int deleteVideoShare(@Param("videoId") int videoId);
+
+    @Update("UPDATE video_share SET is_shared = #{isShared}, shared_at = #{sharedAt}, shared_by = #{sharedBy} WHERE video_id = #{videoId}")
+    int updateVideoShare(@Param("isShared") boolean isShared, @Param("sharedAt") Timestamp sharedAt, @Param("sharedBy") int sharedBy, @Param("videoId") int videoId);
+
+    @Select("SELECT v.* FROM videos v JOIN video_share vs ON v.video_id = vs.video_id WHERE vs.is_shared = 1 ")
+    List<Videos> getAllSharedVideos();
+
+    @Select("SELECT vs.* FROM video_share vs JOIN videos v ON vs.video_id = v.video_id WHERE v.user_id = #{userId}")
+    List<VideoShared> getUserShared(@Param("userId") int userId);
+
+    @Select("SELECT * FROM video_share")
+    List<VideoShared> getAllShared();
 }

@@ -52,7 +52,6 @@ function showSection(sectionId, event) {
         }
     }
 
-
     document.querySelectorAll('.tab-section').forEach(card => {
         card.classList.remove('active');
     });
@@ -66,6 +65,13 @@ function showSection(sectionId, event) {
 
     if (document.getElementById("video-manage")) {
         loadVideos(); // 初始加载视频列表
+    }
+
+    if (sectionId === 'video-share') {
+        loadSharedVideos(); // 加载自己上传的视频（可以判断哪些是共享状态）
+    }
+    if (sectionId === 'share-management') {
+        loadUserSharedStatus(); // 加载共享状态页面
     }
 
     const submenu = document.getElementById('videoSubmenu');
@@ -145,7 +151,6 @@ function handleLogout() {
     }
 }
 
-
 function loadVideos() {
     fetch('/user/api/videos')
         .then(res => res.json())
@@ -220,8 +225,6 @@ function submitVideoForm(event) {
 
     xhr.send(formData);
 }
-
-
 
 function openVideoModal() {
     document.getElementById('videoModalTitle').innerText = "添加视频";
@@ -323,8 +326,6 @@ function updateVideo(event) {
     xhr.send(formData);
 }
 
-
-
 function searchVideos() {
     const keyword = document.getElementById('videoSearchInput').value.toLowerCase();
     const rows = document.querySelectorAll('#videoTable tbody tr');
@@ -384,3 +385,150 @@ document.getElementById('coverForm').addEventListener('submit', async function (
         console.error('封面生成错误:', error);
     }
 });
+
+document.getElementById('highlightForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    const status = document.getElementById("processStatus");
+    status.textContent = "⏳ 正在上传并处理，请稍候...";
+
+    try {
+        const res = await fetch('/api/highlight/generate', {
+            method: 'POST',
+            body: formData
+        });
+
+        const contentType = res.headers.get("Content-Type");
+
+        if (res.ok && contentType === "video/mp4") {
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "highlight_edited_video.mp4";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            status.textContent = "✅ 成功生成并下载精彩瞬间！";
+        } else {
+            const errorText = await res.text(); // 只读一次！
+            status.textContent = "❌ 出错了：" + errorText;
+        }
+
+
+    } catch (err) {
+        console.error(err);
+        status.textContent = "❌ 请求失败：" + err.message;
+    }
+});
+
+
+// 从后端加载带有“分享”标识的视频（你后端已经处理了 /api/videos/shared 接口）
+async function loadSharedVideos() {
+    try {
+        const response = await fetch('/api/videos/shared');
+        const videos = await response.json();
+        renderSharedVideoList(videos);
+    } catch (error) {
+        console.error('获取共享视频失败:', error);
+    }
+}
+
+// 渲染共享视频卡片
+function renderSharedVideoList(videos) {
+    const container = document.getElementById('sharedVideoList');
+    container.innerHTML = videos.map(video => `
+        <div class="shared-video-card" data-title="${video.videoName.toLowerCase()}"
+             onclick="window.location.href='/api/videos/play/${video.videoId}'">
+            <img src="${video.videoCover}" alt="${video.videoName}" style="width: 200px;">
+            <h4>${video.videoName}</h4>
+            <p>分类：${video.category}</p>
+        </div>
+    `).join('');
+}
+
+
+// 搜索共享视频
+function searchSharedVideos() {
+    const keyword = document.getElementById('sharedVideoSearchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('#sharedVideoList .shared-video-card');
+
+    cards.forEach(card => {
+        const title = card.getAttribute('data-title');
+        card.style.display = title.includes(keyword) ? 'block' : 'none';
+    });
+}
+
+
+async function loadUserSharedStatus() {
+    try {
+        const response = await fetch('/api/videos/sharedMine');
+        if (!response.ok) {
+            throw new Error(`服务器返回状态 ${response.status}`);
+        }
+        const sharedList = await response.json();
+        renderUserSharedTable(sharedList);
+    } catch (error) {
+        console.error('获取用户共享状态失败：', error);
+        const container = document.getElementById('userSharedTable').querySelector('tbody');
+        container.innerHTML = `<tr><td colspan="5" style="color:red;">加载失败，请稍后重试。</td></tr>`;
+    }
+}
+
+function renderUserSharedTable(sharedList) {
+    const tbody = document.getElementById('userSharedTable').querySelector('tbody');
+    if (!sharedList.length) {
+        tbody.innerHTML = `<tr><td colspan="6">你还没有上传视频或设置共享状态。</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = sharedList.map(item => {
+
+
+        const isShared = item.shared === true || item.shared === 1 || item.shared === 'true' || item.shared === '1';
+        console.log('共享字段实际值:', isShared); // <-- 关键调试
+        return `
+            <tr>
+                <td>${item.videoId}</td>
+                <td>${item.videoName || '无'}</td>
+                <td>${isShared ? '是' : '否'}</td>
+                <td>${item.sharedAt ? new Date(item.sharedAt).toLocaleString() : '无'}</td>
+                <td>用户ID ${item.sharedBy || '无'}</td>
+                <td>
+                    <button onclick="toggleShared(${item.videoId}, ${isShared})">
+                        修改
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function toggleShared(videoId, currentStatus) {
+    const confirmed = confirm(`确定要将共享状态修改为 ${!currentStatus ? '“是”' : '“否”'} 吗？`);
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch('/api/videos/shared/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                videoId: videoId,
+                isShared: !currentStatus
+            })
+        });
+
+        const result = await response.text();
+        if (response.ok) {
+            alert('更新成功');
+            loadUserSharedStatus(); // 刷新表格
+        } else {
+            alert('更新失败：' + result);
+        }
+    } catch (error) {
+        alert('请求异常：' + error.message);
+    }
+}
+

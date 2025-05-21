@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .register-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 360px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #registerMessage {
+            margin-top: 12px;
+            text-align: center;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <h1>注册新用户</h1>
+    <form id="registerForm">
+        <input type="text" name="userName" placeholder="用户名" required />
+        <input type="password" name="password" placeholder="密码" required />
+        <input type="text" name="email" placeholder="邮箱" />
+        <input type="text" name="phone" placeholder="手机号" />
+        <select name="gender">
+            <option value="男">男</option>
+            <option value="女">女</option>
+            <option value="其他">其他</option>
+        </select>
+        <button type="button" onclick="registerUser()">注册</button>
+    </form>
+
+    <div id="registerMessage"></div>
+</div>
+
+<script>
+    async function registerUser() {
+        const form = document.getElementById('registerForm');
+        const formData = new FormData(form);
+
+        const payload = {
+            userName: formData.get('userName'),
+            password: formData.get('password'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            gender: formData.get('gender')
+        };
+
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            const { userId, userName, password, message } = result;
+
+            const txtContent = `🎉 ${message}\n用户名: ${userName}\n用户ID: ${userId}\n初始密码: ${password}\n请妥善保存！`;
+
+            const blob = new Blob([txtContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `注册信息_${userName}.txt`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+
+            alert("注册成功！注册信息已下载，请查收。");
+            window.location.href = "/login";
+        } else {
+            document.getElementById('registerMessage').innerText = result.message || "注册失败";
+        }
+    }
+</script>
+</body>
+</html>
