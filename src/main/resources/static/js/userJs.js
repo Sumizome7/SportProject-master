@@ -477,6 +477,7 @@ async function loadUserSharedStatus() {
     }
 }
 
+
 function renderUserSharedTable(sharedList) {
     const tbody = document.getElementById('userSharedTable').querySelector('tbody');
     if (!sharedList.length) {
